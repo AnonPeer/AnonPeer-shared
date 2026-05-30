@@ -17,6 +17,8 @@ pub enum ClientPayload {
     },
     SendMessage { msg: AppMessage },
     RequestKeys { target: String }, 
+    SearchUser { username: String },
+    SearchPrefix { prefix: String },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -29,6 +31,8 @@ pub enum ServerPayload {
         ed_public: Vec<u8>, 
         x25519_public: Vec<u8> 
     },
+    UserSearchResult { username: String, exists: bool },
+    SearchResults { matches: Vec<String> },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
