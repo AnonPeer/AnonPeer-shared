@@ -19,6 +19,7 @@ pub enum ClientPayload {
     RequestKeys { target: String }, 
     SearchUser { username: String },
     SearchPrefix { prefix: String },
+    ValidateSession { session_id: String },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
