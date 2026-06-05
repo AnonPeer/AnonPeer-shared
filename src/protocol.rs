@@ -2,21 +2,17 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum MessageContent {
+    Text(String),
+    Image { mime_type: String, base64_data: String },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ClientPayload {
-    Register { 
-        username: String, 
-        password: String, 
-        ed_public: Vec<u8>, 
-        x25519_public: Vec<u8> 
-    },
-    Login { 
-        username: String, 
-        password: String, 
-        ed_public: Vec<u8>, 
-        x25519_public: Vec<u8> 
-    },
+    Register { username: String, password: String, ed_public: Vec<u8>, x25519_public: Vec<u8> },
+    Login { username: String, password: String, ed_public: Vec<u8>, x25519_public: Vec<u8> },
     SendMessage { msg: AppMessage },
-    RequestKeys { target: String }, 
+    RequestKeys { target: String },
     SearchUser { username: String },
     SearchPrefix { prefix: String },
     ValidateSession { session_id: String },
