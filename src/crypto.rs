@@ -6,6 +6,7 @@ use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer, Verifier};
 use rand::RngCore;
 use x25519_dalek::{StaticSecret, PublicKey};
 use crate::errors::AnonError;
+use sha2::{Sha256, Digest};
 
 pub fn hash_password(password: &str) -> Result<String, AnonError> {
     let salt = SaltString::generate(&mut OsRng);
@@ -88,4 +89,24 @@ pub fn decrypt_verify(
     cipher
         .decrypt(Nonce::from_slice(nonce), ciphertext)
         .map_err(|e| AnonError::Crypto(format!("Dec: {e}")))
+}
+
+pub fn generate_sas(my_x25519_secret: &[u8], peer_x25519_public: &[u8]) -> Result<String, crate::errors::AnonError> {
+    use sha2::Digest;
+    
+    let s: [u8; 32] = my_x25519_secret.try_into()
+        .map_err(|_| crate::errors::AnonError::Crypto("Invalid secret len".into()))?;
+    let p: [u8; 32] = peer_x25519_public.try_into()
+        .map_err(|_| crate::errors::AnonError::Crypto("Invalid public len".into()))?;
+    
+    // Вычисляем общий секрет по Диффи-Хеллману
+    let shared = x25519_dalek::StaticSecret::from(s).diffie_hellman(&x25519_dalek::PublicKey::from(p));
+    
+    // Хэшируем его SHA-256
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(shared.as_bytes());
+    let result = hasher.finalize();
+    
+    // Берем первые 4 байта и форматируем как HEX (например, "a1b2-c3d4")
+    Ok(format!("{:02x}{:02x}-{:02x}{:02x}", result[0], result[1], result[2], result[3]))
 }

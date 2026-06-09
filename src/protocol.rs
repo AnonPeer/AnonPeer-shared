@@ -16,6 +16,7 @@ pub enum ClientPayload {
     SearchUser { username: String },
     SearchPrefix { prefix: String },
     ValidateSession { session_id: String },
+    Federate { from_server: String, msg: AppMessage }, 
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,7 +36,8 @@ pub enum ServerPayload {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppMessage {
     pub id: Uuid,
-    pub from: String,
+    // Теперь from и to могут быть в формате "user" или "user@domain.com"
+    pub from: String, 
     pub to: String,
     pub timestamp: u64,
     pub ciphertext: Vec<u8>,
