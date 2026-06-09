@@ -36,7 +36,6 @@ pub enum ServerPayload {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppMessage {
     pub id: Uuid,
-    // Теперь from и to могут быть в формате "user" или "user@domain.com"
     pub from: String, 
     pub to: String,
     pub timestamp: u64,
