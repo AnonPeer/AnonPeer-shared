@@ -6,8 +6,7 @@ use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer, Verifier};
 use rand::RngCore;
 use x25519_dalek::{StaticSecret, PublicKey};
 use crate::errors::AnonError;
-use sha2::{Sha256, Digest};
-
+use sha2::Digest;
 pub fn hash_password(password: &str) -> Result<String, AnonError> {
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();

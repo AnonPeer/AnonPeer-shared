@@ -5,6 +5,14 @@ use uuid::Uuid;
 pub struct UserInfo {
     pub nickname: String,
     pub username: String,
+    #[serde(default)]
+    pub bio: String,
+    #[serde(default)]
+    pub avatar_base64: Option<String>,
+    #[serde(default)]
+    pub server_domain: Option<String>,
+    #[serde(default)]
+    pub last_seen: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -28,7 +36,8 @@ pub enum ClientPayload {
     SearchPrefix { prefix: String },
     ValidateSession { session_id: String },
     Federate { from_server: String, msg: AppMessage },
-    RequestProfile { username: String }, 
+    RequestProfile { username: String },
+    UpdateProfile { bio: Option<String>, avatar_base64: Option<String> },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,7 +47,8 @@ pub enum ServerPayload {
     Forward { msg: AppMessage },
     PeerKeys { target: String, ed_public: Vec<u8>, x25519_public: Vec<u8> },
     SearchResults { matches: Vec<UserInfo> }, 
-    ProfileResult { user: Option<UserInfo> }, 
+    ProfileResult { user: Option<UserInfo> },
+    ProfileUpdated,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
